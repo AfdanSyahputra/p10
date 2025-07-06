@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+const BASE_URL = 'https://7c96bf74-0a54-41c7-9233-64b5217055e6-00-3l7bhrm1fgkrm.pike.replit.dev'
+
 export const useBarangStore = defineStore('barang', {
   state: () => ({
     daftarBarang: [],
@@ -10,28 +12,26 @@ export const useBarangStore = defineStore('barang', {
   actions: {
     async fetchBarang() {
       try {
-        const res = await axios.get('http://localhost:3000/barang')
+        const res = await axios.get(`${BASE_URL}/barang`)
         this.daftarBarang = res.data
       } catch (error) {
         console.error('Gagal fetch barang:', error)
       }
     },
     async hapusBarang(id) {
-      await axios.delete(`http://localhost:3000/barang/${id}`)
+      await axios.delete(`${BASE_URL}/barang/${id}`)
       this.daftarBarang = this.daftarBarang.filter(b => b.id !== id)
     },
     async hapusSemuaBarang() {
       const promises = this.daftarBarang.map(b =>
-        axios.delete(`http://localhost:3000/barang/${b.id}`)
+        axios.delete(`${BASE_URL}/barang/${b.id}`)
       )
       await Promise.all(promises)
       this.daftarBarang = []
     },
-    
-    // ✅ Tambah Barang (baru)
     async tambahBarang(barang) {
       try {
-        const res = await axios.post('http://localhost:3000/barang', barang)
+        const res = await axios.post(`${BASE_URL}/barang`, barang)
         this.daftarBarang.push(res.data)
       } catch (err) {
         console.error('Gagal tambah barang:', err)

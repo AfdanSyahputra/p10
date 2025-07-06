@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+const BASE_URL = 'https://7c96bf74-0a54-41c7-9233-64b5217055e6-00-3l7bhrm1fgkrm.pike.replit.dev'
+
 export const useCartStore = defineStore('cart', {
   state: () => ({
     items: []
@@ -31,17 +33,17 @@ export const useCartStore = defineStore('cart', {
       }
 
       // Simpan transaksi ke JSON server
-      await axios.post('http://localhost:3000/transaksi', transaksi)
+      await axios.post(`${BASE_URL}/transaksi`, transaksi)
 
       // Update stok barang
       for (const item of this.items) {
         try {
-          const res = await axios.get(`http://localhost:3000/barang/${item.id}`)
+          const res = await axios.get(`${BASE_URL}/barang/${item.id}`)
           const stokSekarang = res.data.stok
           const stokBaru = stokSekarang - item.jumlah
 
           if (stokBaru >= 0) {
-            await axios.patch(`http://localhost:3000/barang/${item.id}`, {
+            await axios.patch(`${BASE_URL}/barang/${item.id}`, {
               stok: stokBaru
             })
           }
