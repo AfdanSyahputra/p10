@@ -32,12 +32,10 @@ export const useCartStore = defineStore('cart', {
         total
       }
 
-      // Simpan transaksi ke JSON server
-      await axios.post(`${BASE_URL}/transaksi`, transaksi)
+      try {
+        await axios.post(`${BASE_URL}/transaksi`, transaksi)
 
-      // Update stok barang
-      for (const item of this.items) {
-        try {
+        for (const item of this.items) {
           const res = await axios.get(`${BASE_URL}/barang/${item.id}`)
           const stokSekarang = res.data.stok
           const stokBaru = stokSekarang - item.jumlah
@@ -47,16 +45,18 @@ export const useCartStore = defineStore('cart', {
               stok: stokBaru
             })
           }
-        } catch (err) {
-          console.error(`Gagal update stok untuk ${item.nama}:`, err)
         }
-      }
 
-      // Kosongkan keranjang setelah transaksi
-      this.kosongkanKeranjang()
+        this.kosongkanKeranjang()
+        alert('Transaksi berhasil!')
+      } catch (err) {
+        console.error('Gagal saat transaksi:', err)
+        alert('Terjadi kesalahan saat transaksi!')
+      }
     }
   },
   getters: {
-    total: (state) => state.items.reduce((sum, item) => sum + item.harga * item.jumlah, 0)
+    total: (state) =>
+      state.items.reduce((sum, item) => sum + item.harga * item.jumlah, 0)
   }
 })
