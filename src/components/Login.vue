@@ -1,101 +1,88 @@
 <template>
   <div class="login-container">
-    <h2>Login</h2>
-    <form @submit.prevent="handleLogin">
-      <div>
-        <label for="username">Username</label>
-        <input v-model="username" id="username" type="text" required />
-      </div>
-      <div>
-        <label for="password">Password</label>
-        <input v-model="password" id="password" type="password" required />
-      </div>
-      <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-      <button type="submit" :disabled="loading">
-        <span v-if="loading">Logging in...</span>
-        <span v-else>Login</span>
-      </button>
-    </form>
+    <div class="login-box">
+      <h2>🔐 Login Admin</h2>
+      <form @submit.prevent="login">
+        <input v-model="username" placeholder="Username" required />
+        <input v-model="password" type="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+      <p v-if="error" class="error">{{ error }}</p>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      errorMessage: '',
-      loading: false,
-    };
-  },
-  methods: {
-    async handleLogin() {
-      if (!this.username || !this.password) {
-        this.errorMessage = 'Username dan password wajib diisi';
-        return;
-      }
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-      this.loading = true;
-      this.errorMessage = '';
+const username = ref('')
+const password = ref('')
+const error = ref('')
+const router = useRouter()
 
-      try {
-        // Simulasi login
-        await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            if (this.username === 'admin' && this.password === 'admin') {
-              resolve();
-            } else {
-              reject(new Error('Username atau password salah'));
-            }
-          }, 1500);
-        });
-
-        alert('Login berhasil!');
-        // Redirect atau aksi lain bisa ditambahkan di sini
-      } catch (error) {
-        this.errorMessage = error.message;
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
-};
+function login() {
+  if (username.value === 'admin' && password.value === 'admin') {
+    router.push('/dashboard')
+  } else {
+    error.value = '❌ Username atau password salah!'
+  }
+}
 </script>
 
 <style scoped>
 .login-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(to bottom right, #dfe9f3, #ffffff);
+}
+
+.login-box {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px 10px;
+  margin: 8px 0;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-size: 16px;
 }
-label {
-  display: block;
-  margin-top: 1rem;
-}
-input {
+
+.login-box button {
   width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-}
-button {
-  margin-top: 1.5rem;
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #4caf50;
+  padding: 12px;
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
 }
-button:disabled {
-  background-color: #a5d6a7;
-  cursor: not-allowed;
+
+.login-box button:hover {
+  background-color: #0056b3;
 }
+
 .error {
+  margin-top: 12px;
   color: red;
-  margin-top: 1rem;
+  font-size: 14px;
 }
 </style>

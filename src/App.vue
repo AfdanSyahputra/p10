@@ -1,12 +1,16 @@
 <template>
-  <div>
-    <h1><center>Warung Madura </center></h1>
-    <router-view></router-view>
+  <div id="app">
+    <router-view />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App'
-}
+<script setup>
+// Kosong, tidak perlu logic di sini untuk sekarang
 </script>
+
+<style scoped>
+#app {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 20px;
+}
+</style>

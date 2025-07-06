@@ -1,87 +1,67 @@
 <template>
   <div class="dashboard">
-    <h2>Dashboard</h2>
-    <p><center>Selamat datang di sistem Warung Madura</center></p>
+    <h1>📦 Dashboard Warung Madura</h1>
 
-    <div class="navigasi">
-      <router-link to="/barang/tambah">
-        <button>Tambah Barang</button>
-      </router-link>
-      <router-link to="/barang">
-        <button>Lihat Daftar Barang</button>
-      </router-link>
-    </div>
+    <nav class="nav">
+      <router-link to="/dashboard/barang" class="nav-link" active-class="active-link">📋 Daftar Barang</router-link>
+      <router-link to="/dashboard/tambah" class="nav-link" active-class="active-link">➕ Tambah Barang</router-link>
+      <router-link to="/dashboard/transaksi" class="nav-link" active-class="active-link">🧾 Transaksi</router-link>
+    </nav>
 
-    <div class="statistik">
-      <div class="stat-card">
-        <h3>{{ jumlahBarang }}</h3>
-        <p>Total Barang</p>
-      </div>
-      <div class="stat-card">
-        <h3>{{ totalStok }}</h3>
-        <p>Total Stok</p>
-      </div>
+    <div class="content">
+      <router-view />
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      barangList: [
-        { nama: 'Indomie', stok: 30 },
-        { nama: 'Susu', stok: 15 },
-        { nama: 'Kopi', stok: 40 },
-      ],
-    };
-  },
-  computed: {
-    jumlahBarang() {
-      return this.barangList.length;
-    },
-    totalStok() {
-      return this.barangList.reduce((total, item) => total + item.stok, 0);
-    },
-  },
-};
-</script>
-
 <style scoped>
 .dashboard {
-  max-width: 800px;
+  max-width: 1000px;
   margin: auto;
-  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 20px;
+  background: #ffffff;
 }
-.navigasi {
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  align-items: center;
+  gap: 10px;
 }
-button {
-  padding: 0.5rem 1rem;
-  background-color: #4caf50;
+
+.nav {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  text-decoration: none;
+  padding: 10px 16px;
+  background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  display: inline-block;
 }
-.statistik {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
+
+.nav-link:hover {
+  background-color: #0056b3;
 }
-.stat-card {
-  flex: 1;
-  background-color: #f5f5f5;
-  padding: 1rem;
+
+.active-link {
+  background-color: #6610f2 !important;
+}
+
+.content {
+  padding: 20px;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.stat-card h3 {
-  margin: 0;
-  font-size: 2rem;
-  color: #2196f3;
+  background: #f9f9f9;
+  min-height: 400px;
 }
 </style>

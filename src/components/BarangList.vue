@@ -1,72 +1,66 @@
 <template>
-  <div class="barang-list">
-    <h2>Daftar Barang</h2>
-    <p>Menampilkan semua barang di Warung Madura.</p>
+  <div>
+    <h2>📦 Daftar Barang</h2>
 
-    <table>
+    <FilterBarang
+      v-model:keyword="barangStore.keyword"
+      v-model:kategori="barangStore.kategori"
+      @hapus-semua="barangStore.hapusSemuaBarang"
+    />
+
+    <BarangStokLow />
+
+    <table border="1" cellpadding="5">
       <thead>
         <tr>
-          <th>No</th>
           <th>Nama</th>
+          <th>Kategori</th>
           <th>Stok</th>
+          <th>Harga</th>
           <th>Aksi</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(barang, index) in daftarBarang" :key="index">
-          <td>{{ index + 1 }}</td>
+        <tr v-for="barang in barangStore.barangTersaring" :key="barang.id">
           <td>{{ barang.nama }}</td>
+          <td>{{ barang.kategori }}</td>
           <td>{{ barang.stok }}</td>
+          <td>Rp{{ barang.harga }}</td>
           <td>
-            <router-link :to="`/barang/edit/${barang.id}`">
-              <button>Edit</button>
-            </router-link>
+            <button @click="editBarang(barang.id)">Edit</button>
+            <button @click="barangStore.hapusBarang(barang.id)">Hapus</button>
+            <button @click="tambahKeKeranjang(barang)">+ Keranjang</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <Keranjang />
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      daftarBarang: [
-        { id: 1, nama: 'Indomie', stok: 30 },
-        { id: 2, nama: 'Susu', stok: 15 },
-        { id: 3, nama: 'Kopi', stok: 40 },
-      ],
-    };
-  },
-};
-</script>
+<script setup>
+import { onMounted } from 'vue'
+import { useBarangStore } from '../stores/barangStore'
+import { useCartStore } from '../stores/cartStore'
+import { useRouter } from 'vue-router'
+import FilterBarang from './FilterBarang.vue'
+import BarangStokLow from './BarangStokLow.vue'
+import Keranjang from './Keranjang.vue'
 
-<style scoped>
-.barang-list {
-  max-width: 800px;
-  margin: auto;
-  padding: 2rem;
+const barangStore = useBarangStore()
+const cartStore = useCartStore()
+const router = useRouter()
+
+onMounted(() => {
+  barangStore.fetchBarang()
+})
+
+function editBarang(id) {
+  router.push(`/dashboard/edit/${id}`)
 }
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
+
+function tambahKeKeranjang(barang) {
+  cartStore.tambahKeKeranjang(barang)
 }
-th, td {
-  border: 1px solid #ddd;
-  padding: 0.75rem;
-  text-align: left;
-}
-th {
-  background-color: #f4f4f4;
-}
-button {
-  padding: 0.3rem 0.75rem;
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-</style>
+</script>

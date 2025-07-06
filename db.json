@@ -1,0 +1,6 @@
+{
+  "barang": [
+    { "id": 1, "nama": "Indomie Goreng", "stok": 25, "harga": 3000 },
+    { "id": 2, "nama": "Aqua Botol", "stok": 15, "harga": 4000 }
+  ]
+}

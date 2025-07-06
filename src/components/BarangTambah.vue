@@ -1,102 +1,87 @@
 <template>
-  <div class="barang-tambah">
+  <div class="form-container">
     <h2>Tambah Barang</h2>
-    <form @submit.prevent="tambahBarang">
-      <div>
-        <label>Nama Barang:</label>
-        <input type="text" v-model="barang.nama" required />
-      </div>
-      <div>
-        <label>Harga:</label>
-        <input type="number" v-model="barang.harga" required />
-      </div>
-      <div>
-        <label>Stok:</label>
-        <input type="number" v-model="barang.stok" required />
-      </div>
-      <div>
-        <label>Gambar:</label>
-        <input type="file" @change="previewGambar" accept="image/*" />
-        <div v-if="gambarPreview">
-          <p>Preview:</p>
-          <img :src="gambarPreview" alt="Preview Gambar" style="max-width: 200px; margin-top: 10px" />
-        </div>
-      </div>
-      <button type="submit">Simpan</button>
+    <form @submit.prevent="simpan" class="form">
+      <label>Nama Barang:</label>
+      <input v-model="nama" required />
+
+      <label>Stok:</label>
+      <input v-model.number="stok" type="number" required />
+
+      <label>Harga:</label>
+      <input v-model.number="harga" type="number" required />
+
+      <label>Kategori:</label>
+      <select v-model="kategori" required>
+        <option disabled value="">Pilih Kategori</option>
+        <option value="Makanan">Makanan</option>
+        <option value="Minuman">Minuman</option>
+        <option value="Rokok">Rokok</option>
+      </select>
+
+      <button type="submit">💾 Simpan</button>
     </form>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      barang: {
-        nama: '',
-        harga: '',
-        stok: '',
-        gambar: null,
-      },
-      gambarPreview: null,
-    };
-  },
-  methods: {
-    previewGambar(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.barang.gambar = file;
-        const reader = new FileReader();
-        reader.onload = e => {
-          this.gambarPreview = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    },
-    tambahBarang() {
-      if (!this.barang.nama || !this.barang.harga || !this.barang.stok) {
-        alert('Semua data barang wajib diisi.');
-        return;
-      }
+<script setup>
+import { ref } from 'vue'
+import { useBarangStore } from '../stores/barangStore'
+import { useRouter } from 'vue-router'
 
-      // Simulasi proses simpan
-      setTimeout(() => {
-        alert('Barang berhasil ditambahkan!');
-        // Reset form
-        this.barang = { nama: '', harga: '', stok: '', gambar: null };
-        this.gambarPreview = null;
-      }, 1000);
-    },
-  },
-};
+const barangStore = useBarangStore()
+const router = useRouter()
+
+const nama = ref('')
+const stok = ref(0)
+const harga = ref(0)
+const kategori = ref('')
+
+// ✅ fungsi simpan wajib async dan pakai await
+async function simpan() {
+  console.log('Klik Simpan') // debug log
+  await barangStore.tambahBarang({
+    nama: nama.value,
+    stok: stok.value,
+    harga: harga.value,
+    kategori: kategori.value
+  })
+  router.push('/dashboard/barang')
+}
 </script>
 
 <style scoped>
-.barang-tambah {
+.form-container {
   max-width: 500px;
   margin: auto;
-  padding: 2rem;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+input,
+select {
+  padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-}
-label {
-  display: block;
-  margin-top: 1rem;
-}
-input[type="text"],
-input[type="number"],
-input[type="file"] {
-  width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
+  border-radius: 6px;
+  font-size: 16px;
 }
 button {
-  margin-top: 1.5rem;
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #2196f3;
-  color: white;
+  padding: 10px;
   border: none;
-  border-radius: 4px;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+button:hover {
+  background-color: #1f8c38;
 }
 </style>
