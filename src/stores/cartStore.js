@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-// Ganti URL ke backend Vercel
+// ✅ Ganti BASE_URL ke API Vercel
 const BASE_URL = 'https://pbk-warung-api.vercel.app/api'
 
 export const useCartStore = defineStore('cart', {
@@ -34,44 +34,32 @@ export const useCartStore = defineStore('cart', {
       }
 
       try {
-        // Simpan transaksi ke json-server (API Vercel)
+        // Simpan transaksi
         await axios.post(`${BASE_URL}/transaksi`, transaksi)
-        console.log('✅ Transaksi berhasil disimpan.')
-      } catch (err) {
-        console.error('❌ Gagal simpan transaksi:', err)
-        return
-      }
 
-      // Update stok barang
-      for (const item of this.items) {
-        try {
+        // Update stok barang
+        for (const item of this.items) {
           const res = await axios.get(`${BASE_URL}/barang/${item.id}`)
-
-          if (!res.data || typeof res.data.stok !== 'number') {
-            console.warn(`⚠️ Barang tidak ditemukan di server: ID ${item.id}`)
-            continue
-          }
-
           const stokSekarang = res.data.stok
           const stokBaru = stokSekarang - item.jumlah
 
           if (stokBaru >= 0) {
-            await axios.patch(`${BASE_URL}/barang/${item.id}`, { stok: stokBaru })
-            console.log(`🛠️ Stok ${item.nama} berhasil dikurangi.`)
-          } else {
-            console.warn(`⚠️ Stok tidak cukup untuk barang: ${item.nama}`)
+            await axios.patch(`${BASE_URL}/barang/${item.id}`, {
+              stok: stokBaru
+            })
           }
-
-        } catch (err) {
-          console.error(`❌ Gagal update stok untuk ${item.nama}:`, err)
         }
-      }
 
-      // Kosongkan keranjang setelah transaksi selesai
-      this.kosongkanKeranjang()
+        this.kosongkanKeranjang()
+        alert('Transaksi berhasil!')
+      } catch (err) {
+        console.error('❌ Gagal saat transaksi:', err.response?.data || err.message)
+        alert('Terjadi kesalahan saat transaksi!')
+      }
     }
   },
   getters: {
-    total: (state) => state.items.reduce((sum, item) => sum + item.harga * item.jumlah, 0)
+    total: (state) =>
+      state.items.reduce((sum, item) => sum + item.harga * item.jumlah, 0)
   }
 })

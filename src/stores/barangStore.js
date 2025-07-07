@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-// Ganti URL lokal ke endpoint Vercel
+// ✅ Ganti BASE_URL ke Vercel
 const BASE_URL = 'https://pbk-warung-api.vercel.app/api'
 
 export const useBarangStore = defineStore('barang', {
