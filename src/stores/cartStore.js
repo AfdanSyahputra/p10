@@ -33,27 +33,41 @@ export const useCartStore = defineStore('cart', {
         total
       }
 
-      // Simpan transaksi ke JSON server Vercel
-      await axios.post(`${BASE_URL}/transaksi`, transaksi)
+      try {
+        // Simpan transaksi ke json-server (API Vercel)
+        await axios.post(`${BASE_URL}/transaksi`, transaksi)
+        console.log('✅ Transaksi berhasil disimpan.')
+      } catch (err) {
+        console.error('❌ Gagal simpan transaksi:', err)
+        return
+      }
 
       // Update stok barang
       for (const item of this.items) {
         try {
           const res = await axios.get(`${BASE_URL}/barang/${item.id}`)
+
+          if (!res.data || typeof res.data.stok !== 'number') {
+            console.warn(`⚠️ Barang tidak ditemukan di server: ID ${item.id}`)
+            continue
+          }
+
           const stokSekarang = res.data.stok
           const stokBaru = stokSekarang - item.jumlah
 
           if (stokBaru >= 0) {
-            await axios.patch(`${BASE_URL}/barang/${item.id}`, {
-              stok: stokBaru
-            })
+            await axios.patch(`${BASE_URL}/barang/${item.id}`, { stok: stokBaru })
+            console.log(`🛠️ Stok ${item.nama} berhasil dikurangi.`)
+          } else {
+            console.warn(`⚠️ Stok tidak cukup untuk barang: ${item.nama}`)
           }
+
         } catch (err) {
-          console.error(`Gagal update stok untuk ${item.nama}:`, err)
+          console.error(`❌ Gagal update stok untuk ${item.nama}:`, err)
         }
       }
 
-      // Kosongkan keranjang setelah transaksi
+      // Kosongkan keranjang setelah transaksi selesai
       this.kosongkanKeranjang()
     }
   },
