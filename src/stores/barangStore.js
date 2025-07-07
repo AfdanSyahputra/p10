@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-const BASE_URL = 'https://7c96bf74-0a54-41c7-9233-64b5217055e6-00-3l7bhrm1fgkrm.pike.replit.dev'
+// Ganti URL lokal ke endpoint Vercel
+const BASE_URL = 'https://pbk-warung-api.vercel.app/api'
 
 export const useBarangStore = defineStore('barang', {
   state: () => ({
@@ -19,15 +20,23 @@ export const useBarangStore = defineStore('barang', {
       }
     },
     async hapusBarang(id) {
-      await axios.delete(`${BASE_URL}/barang/${id}`)
-      this.daftarBarang = this.daftarBarang.filter(b => b.id !== id)
+      try {
+        await axios.delete(`${BASE_URL}/barang/${id}`)
+        this.daftarBarang = this.daftarBarang.filter(b => b.id !== id)
+      } catch (error) {
+        console.error('Gagal hapus barang:', error)
+      }
     },
     async hapusSemuaBarang() {
-      const promises = this.daftarBarang.map(b =>
-        axios.delete(`${BASE_URL}/barang/${b.id}`)
-      )
-      await Promise.all(promises)
-      this.daftarBarang = []
+      try {
+        const promises = this.daftarBarang.map(b =>
+          axios.delete(`${BASE_URL}/barang/${b.id}`)
+        )
+        await Promise.all(promises)
+        this.daftarBarang = []
+      } catch (error) {
+        console.error('Gagal hapus semua barang:', error)
+      }
     },
     async tambahBarang(barang) {
       try {
