@@ -33,14 +33,17 @@
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 
+// ✅ Ganti BASE_URL ke Render
+const BASE_URL = 'https://pbk-warung-api.onrender.com/api'
+
 const transaksi = ref([])
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:3000/transaksi')
+    const res = await axios.get(`${BASE_URL}/transaksi`)
     transaksi.value = res.data
   } catch (err) {
-    console.error('Gagal mengambil transaksi:', err)
+    console.error('❌ Gagal mengambil transaksi:', err.response?.data || err.message)
   }
 })
 </script>
