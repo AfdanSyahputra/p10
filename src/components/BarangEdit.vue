@@ -15,17 +15,27 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
 
+const BASE_URL = 'https://pbk-warung-api.onrender.com/api'
+
 const router = useRouter()
 const route = useRoute()
 const barang = ref(null)
 
 onMounted(async () => {
-  const res = await axios.get(`http://localhost:3000/barang/${route.params.id}`)
-  barang.value = res.data
+  try {
+    const res = await axios.get(`${BASE_URL}/barang/${route.params.id}`)
+    barang.value = res.data
+  } catch (err) {
+    console.error('❌ Gagal ambil data barang:', err.message)
+  }
 })
 
 async function simpan() {
-  await axios.put(`http://localhost:3000/barang/${barang.value.id}`, barang.value)
-  router.push('/dashboard/barang')
+  try {
+    await axios.put(`${BASE_URL}/barang/${barang.value.id}`, barang.value)
+    router.push('/dashboard/barang')
+  } catch (err) {
+    console.error('❌ Gagal simpan perubahan:', err.message)
+  }
 }
 </script>
