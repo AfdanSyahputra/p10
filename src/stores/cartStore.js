@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-// ✅ Ganti BASE_URL ke API Vercel
-const BASE_URL = 'https://pbk-warung-api.vercel.app/api'
+// ✅ Ganti URL Replit ke Render
+const BASE_URL = 'https://pbk-warung-api.onrender.com/api'
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
@@ -37,7 +37,7 @@ export const useCartStore = defineStore('cart', {
         // Simpan transaksi
         await axios.post(`${BASE_URL}/transaksi`, transaksi)
 
-        // Update stok barang
+        // Update stok setiap barang
         for (const item of this.items) {
           const res = await axios.get(`${BASE_URL}/barang/${item.id}`)
           const stokSekarang = res.data.stok

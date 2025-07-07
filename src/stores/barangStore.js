@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-// ✅ Ganti BASE_URL ke Vercel
-const BASE_URL = 'https://pbk-warung-api.vercel.app/api'
+// ✅ Ganti URL Replit ke Render
+const BASE_URL = 'https://pbk-warung-api.onrender.com/api'
 
 export const useBarangStore = defineStore('barang', {
   state: () => ({
